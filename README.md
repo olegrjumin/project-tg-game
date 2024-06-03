@@ -42,3 +42,10 @@ brew install ngrok/ngrok/ngrok
 ```bash
 ngrok config add-authtoken <your_auth_token>
 ```
+
+3. Start ngrok
+
+```bash
+ngrok http --domain=[DOMAIN] https://localhost:5173/
+
+```
