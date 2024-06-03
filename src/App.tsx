@@ -1,29 +1,20 @@
-import { useState } from "react";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 
-import WebApp from "@twa-dev/sdk";
+import { Layout } from "./components/layout";
+import { Home } from "./pages/home";
+import { InviteFriends } from "./pages/invite-friends";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-      {/* Here we add our button with alert callback */}
-      <div className="card">
-        <button
-          onClick={() =>
-            WebApp.showAlert(`Hello World! Current count is ${count}`)
-          }
-        >
-          Show Alert
-        </button>
-      </div>
-    </>
+    <div>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/invite-friends" element={<InviteFriends />} />
+        </Route>
+      </Routes>
+    </div>
   );
 }
 

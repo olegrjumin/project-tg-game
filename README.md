@@ -49,3 +49,8 @@ ngrok config add-authtoken <your_auth_token>
 ngrok http --domain=[DOMAIN] https://localhost:5173/
 
 ```
+
+## TODO
+
+- [ ] Create a menu fixed to bottom with items "Home" and "Invite Friends". One should go to home page and the other should go to the invite friends page.
+- [ ] Create invite friends page. When
