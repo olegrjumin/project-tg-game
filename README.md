@@ -52,5 +52,12 @@ ngrok http --domain=[DOMAIN] https://localhost:5173/
 
 ## TODO
 
+- [ ] Get profile picture, if not present then show Initials
+- [ ] Load game once on /game route. Handle initialization correcty
+- [ ] Implement sprites, add 2-3 objects with different appear, removal animation
+- [ ] Game starts slower going faster
+- [ ] It should have limited amount of falling objects and they should not be that concentrated and spread within the timeframe of 15 seconds
+- [ ] Create success and failure screen
+- [ ] Handle callback when game is over
 - [ ] Create a menu fixed to bottom with items "Home" and "Invite Friends". One should go to home page and the other should go to the invite friends page.
-- [ ] Create invite friends page. When
+- [ ] Create invite friends page.
