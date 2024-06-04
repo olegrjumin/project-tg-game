@@ -11,10 +11,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/game" element={<Game />} />
           <Route path="/invite-friends" element={<InviteFriends />} />
           <Route path="/result" element={<ResultPage />} />
         </Route>
+        <Route path="/game" element={<Game />} />
       </Routes>
     </div>
   );
