@@ -1,13 +1,11 @@
 import { Outlet } from "react-router-dom";
+import { Menu } from "../Menu/menu";
 
 export const Layout = () => {
   return (
     <div>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/invite-friends">Invite Friends</a>
-      </nav>
       <Outlet />
+      <Menu />
     </div>
   );
 };

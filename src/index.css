@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Roboto, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -27,11 +27,11 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
+  margin: 0 auto;
+  max-width: 620pz;
   min-width: 320px;
-  min-height: 100vh;
+  height: 100vh;
+
 }
 
 h1 {
@@ -69,4 +69,9 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+
+main {
+  padding: 2rem;
 }
