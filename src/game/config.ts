@@ -7,6 +7,12 @@ const config: Phaser.Types.Core.GameConfig = {
   backgroundColor: "#282c34",
   width: 800,
   height: 600,
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: { y: 0, x: 0 },
+    },
+  },
   scene: FallingObjects,
 };
 
