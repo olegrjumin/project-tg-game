@@ -1,97 +1,171 @@
 export class FallingViruses extends Phaser.Scene {
-  private viruses: Phaser.Physics.Arcade.Image[];
-  private destroyedViruses: Phaser.Physics.Arcade.Image[];
   private score: number;
-  private remainingTime: number;
+  private shieldActive: boolean;
 
   private scoreText!: Phaser.GameObjects.Text;
-  private timerText!: Phaser.GameObjects.Text;
-  private timer!: Phaser.Time.TimerEvent;
-  private objectsGroup!: Phaser.Physics.Arcade.Group;
+  private virusGroup!: Phaser.Physics.Arcade.Group;
+  private ransomwareGroup!: Phaser.Physics.Arcade.Group;
+  private shieldGroup!: Phaser.Physics.Arcade.Group;
+  private shieldBorder!: Phaser.GameObjects.Graphics;
   private gameEndCallback: (score: number) => void;
 
   constructor(gameEndCallback: (score: number) => void) {
     super();
-    this.viruses = [];
-    this.destroyedViruses = [];
     this.score = 0;
-    this.remainingTime = 15;
+    this.shieldActive = false;
     this.gameEndCallback = gameEndCallback || (() => {});
   }
 
   preload() {
     this.load.setBaseURL(window.location.origin);
-    this.load.image("virus", "/virus.png");
+    this.load.image("virus", "/assets/virus.png");
+    this.load.image("ransomware", "/assets/ransomware.png");
+    this.load.image("shield", "/assets/shield.png");
   }
 
   create() {
-    this.cameras.main.setBounds(0, 0, window.innerWidth, window.innerHeight);
+    this.cameras.main.setBounds(0, 0, +this.sys.game.config.width, +this.sys.game.config.height);
     const startTime = Date.now();
-    const timeElapsed = Date.now() - startTime;
-    this.objectsGroup = this.physics.add.group();
+    this.virusGroup = this.physics.add.group();
+    this.ransomwareGroup = this.physics.add.group();
+    this.shieldGroup = this.physics.add.group();
+    
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => this.addVirus(startTime),
+      callbackScope: this,
+      loop: true,
+    });
 
     this.time.addEvent({
-      delay: 500,
-      callback: () => this.addObject(timeElapsed),
+      delay: 3000,
+      callback: () => this.addRansom(startTime),
       callbackScope: this,
       loop: true,
     });
 
-    this.timer = this.time.addEvent({
-      delay: 1000,
-      callback: this.updateTimer,
+    this.time.addEvent({
+      delay: 20000,
+      callback: () => this.addShield(startTime),
       callbackScope: this,
       loop: true,
     });
 
-    this.timerText = this.add.text(16, 40, "Time: 15", {
+    this.scoreText = this.add.text(16, 16, "Protection: 0%", {
       fontSize: "32px",
-      color: "#fff",
+      color: "#fff", 
     });
 
-    this.scoreText = this.add.text(16, 16, "Score: 0", {
-      fontSize: "32px",
-      color: "#fff",
+  }
+
+  addVirus(startTime: number) {
+    const x = Phaser.Math.Between(40, +this.sys.game.config.width - 40);
+    const virus = this.virusGroup.create(x, 0, "virus");
+    const timeElapsed = Date.now() - startTime;
+    virus.type = 'virus';
+    virus.setVelocityY(150 + 2 * Math.round(timeElapsed / 1000));
+    virus.setInteractive();
+    virus.on("pointerdown", () => {
+      this.handleObjectClick(virus);
     });
   }
 
-  addObject(timeElapsed: number) {
-    const x = Phaser.Math.Between(40, window.innerWidth - 40);
-    const virus = this.objectsGroup.create(x, 0, "virus");
-    virus.setVelocityY(100 + 2 * Math.round(timeElapsed / 1000));
-    virus.setInteractive();
-    virus.on("pointerdown", () => {
-      virus.destroy();
-      this.score++;
-      this.scoreText.setText("Score: " + this.score);
+  addRansom(startTime: number) {
+    const x = Phaser.Math.Between(40, +this.sys.game.config.width - 40);
+    const ransomware = this.ransomwareGroup.create(x, 0, "ransomware");
+    const timeElapsed = Date.now() - startTime;
+    ransomware.type = 'ransomware';
+    ransomware.setVelocityY(200 + 2 * Math.round(timeElapsed / 1000));
+    ransomware.setInteractive();
+    ransomware.on("pointerdown", () => {
+      this.handleObjectClick(ransomware);
     });
+  }
+
+  addShield(startTime: number) {
+    const x = Phaser.Math.Between(40, +this.sys.game.config.width - 40);
+    const shield = this.shieldGroup.create(x, 0, "shield");
+    const timeElapsed = Date.now() - startTime;
+    shield.type = 'shield';
+    shield.setVelocityY(250 + 2 * Math.round(timeElapsed / 1000));
+    shield.setInteractive();
+    shield.on("pointerdown", () => {
+      this.handleShieldClick(shield);
+    });
+  }
+
+  handleObjectClick(object: Phaser.GameObjects.GameObject) {
+    if(object.type === 'virus') this.score += 1;
+    if(object.type === 'ransomware') this.score += 3;
+    this.scoreText.setText(`Protection: ${this.score}%`);
+    object.destroy();
+  }
+
+  handleShieldClick(shield: Phaser.GameObjects.GameObject) {
+    shield.destroy();
+    this.score += 5;
+    this.scoreText.setText(`Protection: ${this.score}`);
+    this.activateShield();
+  }
+
+  activateShield() {
+    this.shieldActive = true;
+
+    if(!this.shieldBorder) {
+      this.shieldBorder = this.add.graphics();
+      this.shieldBorder.lineStyle(8, 0x00ff00, 1)
+      this.shieldBorder.strokeRect(0, 0, +this.sys.game.config.width, +this.sys.game.config.height);
+    } else {
+      this.shieldBorder.setVisible(true);
+    }
+
+    this.time.addEvent({
+      delay: 5000,
+      callback: this.deactivateShield,
+      callbackScope: this
+    })
+    
+  }
+
+  deactivateShield() {
+    this.shieldActive = false;
+    if(this.shieldBorder) {
+      this.shieldBorder.setVisible(false);
+    }
   }
 
   update() {
-    Phaser.Actions.WrapInRectangle(
-      this.viruses,
-      this.cameras.main.getBounds(),
-      128,
-    );
-
-    this.viruses.forEach((virus) => {
-      if (virus.y > window.innerHeight + 40) {
-        virus.destroy();
-        this.destroyedViruses.push(virus);
+    this.virusGroup.children.each((virus) => {
+      if((virus as Phaser.Physics.Arcade.Sprite).y  > +this.sys.game.config.height + 40) {
+        this.handleObjectOutOfBounds(virus);
       }
-    });
+      return null;
+    }, this)
 
-    this.physics.world.collide(this.viruses);
+    this.ransomwareGroup.children.each((ransomware) => {
+      if((ransomware as Phaser.Physics.Arcade.Sprite).y  > +this.sys.game.config.height + 40) {
+        this.handleObjectOutOfBounds(ransomware)
+      }
+      return null;
+    }, this)
+
+    this.shieldGroup.children.each((shield) => {
+      if((shield as Phaser.Physics.Arcade.Sprite).y > +this.sys.game.config.height +40) {
+        shield.destroy();
+      }
+      return null;
+    }, this)
+
   }
 
-  updateTimer() {
-    this.remainingTime--;
-    this.timerText.setText("Time: " + this.remainingTime);
-
-    if (this.remainingTime <= 0) {
-      this.timer.remove();
-
+  handleObjectOutOfBounds(object: Phaser.GameObjects.GameObject) {
+    if(!this.shieldActive) {
+      this.physics.pause();
       this.gameEndCallback(this.score);
+    }
+    else {
+      object.destroy();
+      this.deactivateShield()
     }
   }
 }

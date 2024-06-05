@@ -1,5 +1,6 @@
-import { SDKProvider } from "@tma.js/sdk-react";
-import React, { type FC } from "react";
+import { SDKProvider, useLaunchParams } from "@tma.js/sdk-react";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
+import React, { useEffect, type FC } from "react";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { ErrorBoundary } from "./components/error-boundary";
@@ -19,17 +20,27 @@ const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
   </div>
 );
 
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
+
 const Inner: FC = () => {
+  const debug = useLaunchParams().startParam === "debug";
+
+  useEffect(() => {
+    if (debug) {
+      import("eruda").then((lib) => lib.default.init());
+    }
+  }, [debug]);
+
   return (
-    <SDKProvider acceptCustomStyles>
-      <React.StrictMode>
-        <ErrorBoundary fallback={ErrorBoundaryError}>
-          <BrowserRouter>
+    <React.StrictMode>
+      <SDKProvider acceptCustomStyles debug={debug}>
+        <BrowserRouter>
+          <ConvexProvider client={convex}>
             <App />
-          </BrowserRouter>
-        </ErrorBoundary>
-      </React.StrictMode>
-    </SDKProvider>
+          </ConvexProvider>
+        </BrowserRouter>
+      </SDKProvider>
+    </React.StrictMode>
   );
 };
 
