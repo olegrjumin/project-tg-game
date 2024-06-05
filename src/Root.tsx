@@ -32,17 +32,15 @@ const Inner: FC = () => {
   }, [debug]);
 
   return (
-    <SDKProvider acceptCustomStyles>
-      <React.StrictMode>
-        <ErrorBoundary fallback={ErrorBoundaryError}>
-          <BrowserRouter>
-            <ConvexProvider client={convex}>
-              <App />
-            </ConvexProvider>
-          </BrowserRouter>
-        </ErrorBoundary>
-      </React.StrictMode>
-    </SDKProvider>
+    <React.StrictMode>
+      <SDKProvider acceptCustomStyles debug={debug}>
+        <BrowserRouter>
+          <ConvexProvider client={convex}>
+            <App />
+          </ConvexProvider>
+        </BrowserRouter>
+      </SDKProvider>
+    </React.StrictMode>
   );
 };
 
