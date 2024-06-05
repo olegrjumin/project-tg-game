@@ -1,9 +1,11 @@
 import Phaser from "phaser";
-import { FallingObjects } from "../../game/scenes/FallingObjects";
 import { useEffect, useRef } from "react";
+import { createFallingVirusesScene } from "../../game/createFallingVirusesScene";
+import { useNavigate } from "react-router-dom";
 
 export const Game = () => {
   const phaserGameRef = useRef<any>(null);
+  const navigate = useNavigate();
   const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     backgroundColor: "#282c34",
@@ -16,7 +18,7 @@ export const Game = () => {
         gravity: { y: 0, x: 0 },
       },
     },
-    scene: FallingObjects,
+    scene: createFallingVirusesScene(() => navigate('/result'))
   };
 
   useEffect(() => {
