@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom";
-import { Layout } from "./components/Layout/layout";
-import { Game } from "./pages/Game/game";
-import { Home } from "./pages/Home/home";
+import { Layout } from "./components/layout";
+import { Game } from "./pages/game";
+import { Home } from "./pages/home";
 import { InviteFriends } from "./pages/invite-friends";
-import { ResultPage } from "./pages/result/result-page";
+import { Result } from "./pages/result";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/invite-friends" element={<InviteFriends />} />
-          <Route path="/result" element={<ResultPage />} />
+          <Route path="/result" element={<Result />} />
         </Route>
         <Route path="/game" element={<Game />} />
       </Routes>

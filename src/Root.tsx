@@ -1,9 +1,8 @@
 import { SDKProvider } from "@tma.js/sdk-react";
-import { type FC } from "react";
-import App from "./App";
-import { ErrorBoundary } from "./components/ErrorBoundary";
-import React from "react";
+import React, { type FC } from "react";
 import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import { ErrorBoundary } from "./components/error-boundary";
 
 const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
   <div>
@@ -13,8 +12,8 @@ const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
         {error instanceof Error
           ? error.message
           : typeof error === "string"
-          ? error
-          : JSON.stringify(error)}
+            ? error
+            : JSON.stringify(error)}
       </code>
     </blockquote>
   </div>
