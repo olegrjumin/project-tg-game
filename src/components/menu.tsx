@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
-import { useActivePath } from "../../hooks/useActivePath";
-import { cn } from "../../lib/utils";
+import { useActivePath } from "../hooks/use-active-path";
+import { cn } from "../lib/utils";
 
 export const Menu = () => {
   const { isActive } = useActivePath();
@@ -13,7 +13,7 @@ export const Menu = () => {
             "inline-flex flex-col items-center justify-center px-5 text-gray-500",
             {
               "text-blue-500": isActive("/"),
-            }
+            },
           )}
         >
           <svg
@@ -40,7 +40,7 @@ export const Menu = () => {
             "inline-flex flex-col items-center justify-center px-5 text-gray-500",
             {
               "text-blue-500": isActive("/invite-friends"),
-            }
+            },
           )}
         >
           <svg

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useScramble } from "use-scramble";
 
-export const ResultPage = () => {
+export const Result = () => {
   const points = 50;
   const showSuccess = points >= 50;
   const { ref } = useScramble({

@@ -16,8 +16,7 @@ export class FallingViruses extends Phaser.Scene {
     this.destroyedViruses = [];
     this.score = 0;
     this.remainingTime = 15;
-    this.gameEndCallback = gameEndCallback || (() => { });
-    
+    this.gameEndCallback = gameEndCallback || (() => {});
   }
 
   preload() {
@@ -36,8 +35,8 @@ export class FallingViruses extends Phaser.Scene {
       callback: () => this.addObject(timeElapsed),
       callbackScope: this,
       loop: true,
-    })
-    
+    });
+
     this.timer = this.time.addEvent({
       delay: 1000,
       callback: this.updateTimer,
@@ -57,25 +56,22 @@ export class FallingViruses extends Phaser.Scene {
   }
 
   addObject(timeElapsed: number) {
-    let x = Phaser.Math.Between(
-      40,
-      window.innerWidth - 40
-    );
-    let virus = this.objectsGroup.create(x, 0, 'virus');
-    virus.setVelocityY(100 + 2*Math.round(timeElapsed / 1000));
+    const x = Phaser.Math.Between(40, window.innerWidth - 40);
+    const virus = this.objectsGroup.create(x, 0, "virus");
+    virus.setVelocityY(100 + 2 * Math.round(timeElapsed / 1000));
     virus.setInteractive();
-    virus.on('pointerdown', () => {
+    virus.on("pointerdown", () => {
       virus.destroy();
       this.score++;
       this.scoreText.setText("Score: " + this.score);
-    })
+    });
   }
 
   update() {
     Phaser.Actions.WrapInRectangle(
       this.viruses,
       this.cameras.main.getBounds(),
-      128
+      128,
     );
 
     this.viruses.forEach((virus) => {
@@ -83,7 +79,7 @@ export class FallingViruses extends Phaser.Scene {
         virus.destroy();
         this.destroyedViruses.push(virus);
       }
-    })
+    });
 
     this.physics.world.collide(this.viruses);
   }
