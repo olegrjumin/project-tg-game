@@ -1,10 +1,10 @@
 import { useQuery } from "convex/react";
 import { Link } from "react-router-dom";
+import { Toaster } from "sonner";
 import { api } from "../../convex/_generated/api";
 import { Avatar } from "../components/avatar";
 import { GlowingStarsBackgroundCard } from "../components/glowing-stars";
 import { useTgUser } from "../hooks/use-tg-user";
-import { Toaster } from "sonner";
 
 export const PointsSkeleton = () => {
   return (
@@ -38,13 +38,9 @@ export const Home = () => {
           <div className="relative">
             <GlowingStarsBackgroundCard />
 
-            {!user?.points ? (
-              <div className="h-12">...</div>
-            ) : (
-              <p className="text-[2rem] font-mono font-bold h-12">
-                {user?.points} P
-              </p>
-            )}
+            <p className="text-[2rem] font-mono font-bold h-12">
+              {user?.points || 0} P
+            </p>
 
             <p>Help protect your device from malware.</p>
             <p>Join the protection squad!</p>

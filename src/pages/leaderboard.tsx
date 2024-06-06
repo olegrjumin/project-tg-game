@@ -8,6 +8,7 @@ export const Leaderboard = () => {
 
   return (
     <main className="relative h-screen w-screen justify-center mx-auto p-10 flex items-center">
+      <div className="fixed inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
       <div className="flex flex-col space-y-10 text-center w-full h-full max-w-lg">
         <div className="text-center">
           <svg
@@ -42,7 +43,6 @@ export const Leaderboard = () => {
           <UserList users={topTenUsers || []} />
         ) : null}
       </div>
-      <div className="fixed inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
     </main>
   );
 };

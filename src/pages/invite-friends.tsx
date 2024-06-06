@@ -1,7 +1,7 @@
 import { initUtils } from "@tma.js/sdk";
 import { UserItemSkeleton, UserList } from "../components/user-list";
-import { useGetInvitees } from "../hooks/use-get-invitees";
 import { useTgUser } from "../hooks/use-tg-user";
+import { useGetInvitees } from "../hooks/use-get-invitees";
 
 export const InviteFriends = () => {
   const utils = initUtils();
@@ -18,9 +18,9 @@ export const InviteFriends = () => {
   };
 
   return (
-    <main className="justify-center mx-auto p-10 h-screen flex items-center max-w-lg">
-      <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
-      <div className="flex flex-col space-y-10 text-center">
+    <main className="relative h-screen w-screen justify-center mx-auto p-10 flex items-center">
+      <div className="fixed inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+      <div className="flex flex-col space-y-10 text-center w-full h-full max-w-lg">
         <div className="text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
