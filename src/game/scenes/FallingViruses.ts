@@ -1,6 +1,8 @@
 export class FallingViruses extends Phaser.Scene {
   private score: number;
   private shieldActive: boolean;
+  private scoreMultiplier: number;
+  private multiplierActive: boolean;
 
   private scoreText!: Phaser.GameObjects.Text;
   private virusGroup!: Phaser.Physics.Arcade.Group;
@@ -9,11 +11,13 @@ export class FallingViruses extends Phaser.Scene {
   private shieldBorder!: Phaser.GameObjects.Graphics;
   private gameEndCallback: (score: number) => void;
 
-  constructor(gameEndCallback: (score: number) => void) {
+  constructor(gameEndCallback: (score: number) => void, scoreMultiplier: number = 1) {
     super();
     this.score = 0;
     this.shieldActive = false;
     this.gameEndCallback = gameEndCallback || (() => {});
+    this.scoreMultiplier = scoreMultiplier < 5 ? scoreMultiplier : 5;
+    this.multiplierActive = scoreMultiplier > 1;
   }
 
   preload() {
@@ -51,8 +55,15 @@ export class FallingViruses extends Phaser.Scene {
       loop: true,
     });
 
-    this.scoreText = this.add.text(16, 16, "Protection: 0%", {
-      fontSize: "32px",
+    this.time.addEvent({
+      delay: 15000,
+      callback: this.deactivateScoreMultiplier,
+      callbackScope: this,
+      loop: true,
+    });
+
+    this.scoreText = this.add.text(16, 16, `Protection: ${this.score}%${this.multiplierActive ? `  ${this.scoreMultiplier}X points` : ''}`, {
+      fontSize: "16px",
       color: "#fff", 
     });
 
@@ -95,16 +106,22 @@ export class FallingViruses extends Phaser.Scene {
   }
 
   handleObjectClick(object: Phaser.GameObjects.GameObject) {
-    if(object.type === 'virus') this.score += 1;
-    if(object.type === 'ransomware') this.score += 3;
-    this.scoreText.setText(`Protection: ${this.score}%`);
+    let points = 0
+    if(object.type === 'virus') points += 1;
+    if(object.type === 'ransomware') points += 3;
+    if(this.multiplierActive) {
+      points *= this.scoreMultiplier;
+    }
+
+    this.score += points;
+    this.scoreText.setText(`Protection: ${this.score}%${this.multiplierActive ? `  ${this.scoreMultiplier}X points` : ''}`);
     object.destroy();
   }
 
   handleShieldClick(shield: Phaser.GameObjects.GameObject) {
     shield.destroy();
-    this.score += 5;
-    this.scoreText.setText(`Protection: ${this.score}`);
+    this.score += this.multiplierActive ? 5 * this.scoreMultiplier : 5;
+    this.scoreText.setText(`Protection: ${this.score}%${this.multiplierActive ? `  ${this.scoreMultiplier}X points` : ''}`);
     this.activateShield();
   }
 
@@ -132,6 +149,12 @@ export class FallingViruses extends Phaser.Scene {
     if(this.shieldBorder) {
       this.shieldBorder.setVisible(false);
     }
+  }
+
+  deactivateScoreMultiplier() {
+    console.log('deactivate multiplier')
+    this.multiplierActive = false;
+    this.scoreText.setText(`Protection: ${this.score}%`);
   }
 
   update() {
