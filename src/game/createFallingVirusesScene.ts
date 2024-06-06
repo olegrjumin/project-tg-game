@@ -1,9 +1,11 @@
-import { FallingViruses } from "./scenes/FallingViruses"
+import { FallingViruses } from "./scenes/FallingViruses";
 
-export const  createFallingVirusesScene = (callbackFunction: () => void) => {
-    return class extends FallingViruses {
-        constructor() {
-            super(callbackFunction)
-        }
+export const createFallingVirusesScene = (
+  callbackFunction: (score: number) => void,
+) => {
+  return class extends FallingViruses {
+    constructor() {
+      super(callbackFunction);
     }
-}
+  };
+};

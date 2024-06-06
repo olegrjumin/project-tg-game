@@ -4,21 +4,7 @@ import React, { useEffect, type FC } from "react";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { ErrorBoundary } from "./components/error-boundary";
-
-const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
-  <div>
-    <p>An unhandled error occurred:</p>
-    <blockquote>
-      <code>
-        {error instanceof Error
-          ? error.message
-          : typeof error === "string"
-            ? error
-            : JSON.stringify(error)}
-      </code>
-    </blockquote>
-  </div>
-);
+import { ErrorBoundaryError } from "./components/error-boundary-error";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
 

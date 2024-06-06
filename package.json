@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-scroll-area": "^1.0.5",
     "@tma.js/sdk-react": "^2.2.2",
     "convex": "^1.12.1",
     "eruda": "^3.0.1",
+    "framer-motion": "^11.2.10",
     "phaser": "^3.80.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

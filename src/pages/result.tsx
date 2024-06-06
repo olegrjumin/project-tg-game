@@ -1,13 +1,25 @@
-import { Link } from "react-router-dom";
+import { useUtils } from "@tma.js/sdk-react";
+import { Link, useLocation } from "react-router-dom";
 import { useScramble } from "use-scramble";
+import { useSaveGameResult } from "../hooks/use-save-game-result";
 
 export const Result = () => {
-  const points = 50;
+  const location = useLocation();
+  const points = location.state?.score || 0;
+
+  const utils = useUtils();
+
+  useSaveGameResult(points);
+
   const showSuccess = points >= 50;
   const { ref } = useScramble({
     text: "Malwarebytes.com",
     playOnMount: true,
   });
+
+  const handleLinkClick = () => {
+    utils.openLink("https://www.malwarebytes.com");
+  };
 
   return (
     <main className="justify-center mx-auto p-10 h-screen flex items-center">
@@ -24,7 +36,7 @@ export const Result = () => {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="lucide lucide-shield-check size-24 mx-auto"
+            className="lucide lucide-shield-check size-10 mx-auto"
           >
             <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
             <path d="m9 12 2 2 4-4" />
@@ -42,7 +54,7 @@ export const Result = () => {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="lucide lucide-shield-alert size-24 mx-auto"
+            className="lucide lucide-shield-alert size-12 mx-auto"
           >
             <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
             <path d="M12 8v4" />
@@ -57,25 +69,32 @@ export const Result = () => {
         <div className="text-3xl">{points} points</div>
 
         <div>
-          {showSuccess ? (
-            <>
-              <p>
-                You've managed to protect your device from threats on your own!
-              </p>
-              <p>Good luck with that, but there is a better way</p>
-            </>
-          ) : (
-            <>
-              <p>It's okay, you can always try again!</p>
+          <div className="text-sm">
+            {showSuccess ? (
+              <>
+                <p>
+                  You've managed to protect your device from threats on your
+                  own!
+                </p>
+                <p>Good luck with that, but there is a better way</p>
+              </>
+            ) : (
+              <>
+                <p>It's okay, you can always try again!</p>
 
-              <p>
-                It's better to rely on professionals when <br /> it comes to
-                protecting your device from threats.
-              </p>
-            </>
-          )}
+                <p>
+                  It's better to rely on professionals when <br /> it comes to
+                  protecting your device from threats.
+                </p>
+              </>
+            )}
+          </div>
 
-          <p className="text-xl py-2" ref={ref}></p>
+          <p
+            onClick={handleLinkClick}
+            className="text-xl py-2 underline"
+            ref={ref}
+          ></p>
         </div>
 
         <div className="flex flex-col space-y-2">

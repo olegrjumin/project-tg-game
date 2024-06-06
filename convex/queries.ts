@@ -13,6 +13,14 @@ export const userByTelegramId = query({
   },
 });
 
+export const topTenUsers = query({
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    const topTenUsers = users.sort((a, b) => b.points - a.points).slice(0, 10);
+    return topTenUsers;
+  },
+});
+
 export const invitees = query({
   args: {
     tgUserId: v.string(),
@@ -74,5 +82,26 @@ export const newUser = mutation({
     });
 
     return { id, existingUser: false };
+  },
+});
+
+export const updateUserPoints = mutation({
+  args: {
+    tgUserId: v.string(),
+    points: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("tgUserId"), args.tgUserId))
+      .unique();
+
+    if (user === null) {
+      throw new Error("User not found");
+    }
+
+    if (user.points < args.points) {
+      await ctx.db.patch(user._id, { points: args.points });
+    }
   },
 });
