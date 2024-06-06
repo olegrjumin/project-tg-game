@@ -1,11 +1,21 @@
 import Phaser from "phaser";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createFallingVirusesScene } from "../game/createFallingVirusesScene";
 
 export const Game = () => {
   const phaserGameRef = useRef<Phaser.Game | null>(null);
   const navigate = useNavigate();
+
+  const handleGameEndCallback = useCallback(
+    (score: number) => {
+      navigate("/result", {
+        state: { score },
+      });
+    },
+    [navigate],
+  );
+
   const config: Phaser.Types.Core.GameConfig = useMemo(
     () => ({
       type: Phaser.AUTO,
@@ -19,9 +29,9 @@ export const Game = () => {
           gravity: { y: 0, x: 0 },
         },
       },
-      scene: createFallingVirusesScene(() => navigate("/result")),
+      scene: createFallingVirusesScene(handleGameEndCallback),
     }),
-    [navigate],
+    [handleGameEndCallback],
   );
 
   useEffect(() => {

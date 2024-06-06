@@ -26,7 +26,7 @@ export const Avatar = ({
         "relative inline-flex items-center justify-center overflow-hidden bg-gray-100 rounded-full mx-auto",
         {
           "size-12": size === "small",
-          "size-32": size === "medium",
+          "size-24": size === "medium",
           "size-48": size === "large",
         },
       )}
@@ -35,7 +35,7 @@ export const Avatar = ({
         className={cn("text-gray-600", {
           "text-[18px]": size === "small",
           "text-[32px]": size === "medium",
-          "text-[48px]": size === "medium",
+          "text-[48px]": size === "large",
         })}
       >
         {getInitials(firstName, lastName)}
