@@ -26,10 +26,21 @@ export class FallingViruses extends Phaser.Scene {
   preload() {
     this.load.setBaseURL(window.location.origin);
     this.load.image("background", "/assets/game-background.png");
-    this.load.image("virus", "/assets/virus.png");
-    this.load.image("ransomware", "/assets/ransomware.png");
-    this.load.image("shield", "/assets/shield.png");
-    this.load.atlas("virusAnim", "/assets/sprites.png", "/assets/sprites.json");
+    this.load.atlas(
+      "shield_animation",
+      "/assets/shield-sprites.png",
+      "/assets/shield-sprites.json",
+    );
+    this.load.atlas(
+      "virus_animation",
+      "/assets/virus-sprites.png",
+      "/assets/virus-sprites.json",
+    );
+    this.load.atlas(
+      "ransomware_animation",
+      "/assets/ransomware-sprites.png",
+      "/assets/ransomware-sprites.json",
+    );
   }
 
   create() {
@@ -45,8 +56,8 @@ export class FallingViruses extends Phaser.Scene {
     this.shieldGroup = this.physics.add.group();
 
     this.anims.create({
-      key: "idle",
-      frames: this.anims.generateFrameNames("virusAnim", {
+      key: "virus_idle",
+      frames: this.anims.generateFrameNames("virus_animation", {
         prefix: "idle_",
         start: 0,
         end: 13,
@@ -55,14 +66,46 @@ export class FallingViruses extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: "explosion",
-      frames: this.anims.generateFrameNames("virusAnim", {
+      key: "virus_explosion",
+      frames: this.anims.generateFrameNames("virus_animation", {
         prefix: "explosion_",
         start: 0,
         end: 7,
         zeroPad: 4,
       }),
       repeat: 0,
+    });
+
+    this.anims.create({
+      key: "ransomware_idle",
+      frames: this.anims.generateFrameNames("ransomware_animation", {
+        prefix: "idle_",
+        start: 0,
+        end: 17,
+        zeroPad: 4,
+      }),
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "ransomware_explosion",
+      frames: this.anims.generateFrameNames("ransomware_animation", {
+        prefix: "explosion_",
+        start: 0,
+        end: 7,
+        zeroPad: 4,
+      }),
+      repeat: 0,
+    });
+
+    this.anims.create({
+      key: "shield_idle",
+      frames: this.anims.generateFrameNames("shield_animation", {
+        prefix: "idle_",
+        start: 0,
+        end: 19,
+        zeroPad: 4,
+      }),
+      repeat: -1,
     });
 
     this.time.addEvent({
@@ -114,8 +157,7 @@ export class FallingViruses extends Phaser.Scene {
   addVirus(startTime: number) {
     const x = Phaser.Math.Between(40, +this.sys.game.config.width - 40);
     const virus = this.virusGroup.create(x, 0, "virus");
-    const virusSprite = virus as Phaser.Physics.Arcade.Sprite;
-    virusSprite.anims.play("idle");
+    virus.anims.play("virus_idle");
     const timeElapsed = Date.now() - startTime;
     virus.type = "virus";
     virus.setVelocityY(50 + 2 * Math.round(timeElapsed / 1000));
@@ -128,6 +170,7 @@ export class FallingViruses extends Phaser.Scene {
   addRansom(startTime: number) {
     const x = Phaser.Math.Between(40, +this.sys.game.config.width - 40);
     const ransomware = this.ransomwareGroup.create(x, 0, "ransomware");
+    ransomware.anims.play("ransomware_idle");
     const timeElapsed = Date.now() - startTime;
     ransomware.type = "ransomware";
     ransomware.setVelocityY(100 + 2 * Math.round(timeElapsed / 1000));
@@ -140,6 +183,8 @@ export class FallingViruses extends Phaser.Scene {
   addShield(startTime: number) {
     const x = Phaser.Math.Between(40, +this.sys.game.config.width - 40);
     const shield = this.shieldGroup.create(x, 0, "shield");
+    shield.anims.play("shield_idle");
+
     const timeElapsed = Date.now() - startTime;
     shield.type = "shield";
     shield.setVelocityY(150 + 2 * Math.round(timeElapsed / 1000));
@@ -159,7 +204,6 @@ export class FallingViruses extends Phaser.Scene {
       points *= this.scoreMultiplier;
     }
 
-    console.log("ola");
     this.score += points;
     this.scoreText.setText(
       `${this.score}P${this.multiplierActive ? `  ${this.scoreMultiplier}X` : ""}`,
@@ -184,13 +228,20 @@ export class FallingViruses extends Phaser.Scene {
       onComplete: () => pointsText.destroy(),
     });
     objectSprite.anims.pause();
-    objectSprite.anims.play("explosion");
+
+    if (object.type === "virus") {
+      objectSprite.anims.play("virus_explosion");
+    }
+    if (object.type === "ransomware") {
+      objectSprite.anims.play("ransomware_explosion");
+    }
+    if (object.type === "shield") {
+      object.destroy();
+    }
+
     objectSprite.on("animationcomplete", () => {
       object.destroy();
     });
-    object.destroy();
-
-    console.log("olaOB", object);
   }
 
   activateShield() {
