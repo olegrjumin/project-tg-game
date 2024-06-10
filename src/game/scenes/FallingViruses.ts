@@ -22,17 +22,25 @@ export class FallingViruses extends Phaser.Scene {
 
   preload() {
     this.load.setBaseURL(window.location.origin);
+    this.load.image("background", "/assets/game-background.png")
     this.load.image("virus", "/assets/virus.png");
     this.load.image("ransomware", "/assets/ransomware.png");
     this.load.image("shield", "/assets/shield.png");
+    this.load.atlas("virusAnim", "/assets/sprites.png", "/assets/sprites.json");
   }
 
   create() {
-    this.cameras.main.setBounds(0, 0, +this.sys.game.config.width, +this.sys.game.config.height);
+    const gameWidth = +this.sys.game.config.width;
+    const gameHeight = +this.sys.game.config.height;
+    this.cameras.main.setBounds(0, 0, gameWidth, gameHeight);
+    this.add.image(gameWidth/2, gameHeight/2, 'background').setDisplaySize(gameWidth, gameHeight);
     const startTime = Date.now();
     this.virusGroup = this.physics.add.group();
     this.ransomwareGroup = this.physics.add.group();
     this.shieldGroup = this.physics.add.group();
+
+    this.anims.create({ key: 'idle', frames: this.anims.generateFrameNames('virusAnim', { prefix: 'idle_', start: 0, end: 13, zeroPad: 4}), repeat: -1});
+    this.anims.create({ key: 'explosion', frames: this.anims.generateFrameNames('virusAnim', { prefix: 'explosion_', start: 0, end: 7, zeroPad: 4}), repeat: 0});
     
     this.time.addEvent({
       delay: 1000,
@@ -62,19 +70,26 @@ export class FallingViruses extends Phaser.Scene {
       loop: true,
     });
 
-    this.scoreText = this.add.text(16, 16, `Protection: ${this.score}%${this.multiplierActive ? `  ${this.scoreMultiplier}X points` : ''}`, {
-      fontSize: "16px",
-      color: "#fff", 
-    });
+    this.scoreText = this.add.text(gameWidth - 20, 20, `${this.score}P${this.multiplierActive ? `  ${this.scoreMultiplier}X` : ''}`, {
+      fontSize: "24px",
+      color: "#000000",
+      backgroundColor: "#ffffff",
+      padding: { x: 5, y: 5 } 
+    }).setOrigin(1, 0);
+
+    this.shieldBorder = this.add.graphics();
+    this.shieldBorder.setDepth(1);
 
   }
 
   addVirus(startTime: number) {
     const x = Phaser.Math.Between(40, +this.sys.game.config.width - 40);
     const virus = this.virusGroup.create(x, 0, "virus");
+    const virusSprite = (virus as Phaser.Physics.Arcade.Sprite);
+    virusSprite.anims.play('idle');
     const timeElapsed = Date.now() - startTime;
     virus.type = 'virus';
-    virus.setVelocityY(150 + 2 * Math.round(timeElapsed / 1000));
+    virus.setVelocityY(50 + 2 * Math.round(timeElapsed / 1000));
     virus.setInteractive();
     virus.on("pointerdown", () => {
       this.handleObjectClick(virus);
@@ -86,7 +101,7 @@ export class FallingViruses extends Phaser.Scene {
     const ransomware = this.ransomwareGroup.create(x, 0, "ransomware");
     const timeElapsed = Date.now() - startTime;
     ransomware.type = 'ransomware';
-    ransomware.setVelocityY(200 + 2 * Math.round(timeElapsed / 1000));
+    ransomware.setVelocityY(100 + 2 * Math.round(timeElapsed / 1000));
     ransomware.setInteractive();
     ransomware.on("pointerdown", () => {
       this.handleObjectClick(ransomware);
@@ -98,10 +113,11 @@ export class FallingViruses extends Phaser.Scene {
     const shield = this.shieldGroup.create(x, 0, "shield");
     const timeElapsed = Date.now() - startTime;
     shield.type = 'shield';
-    shield.setVelocityY(250 + 2 * Math.round(timeElapsed / 1000));
+    shield.setVelocityY(150 + 2 * Math.round(timeElapsed / 1000));
     shield.setInteractive();
     shield.on("pointerdown", () => {
-      this.handleShieldClick(shield);
+      this.handleObjectClick(shield);
+      this.activateShield();
     });
   }
 
@@ -109,32 +125,45 @@ export class FallingViruses extends Phaser.Scene {
     let points = 0
     if(object.type === 'virus') points += 1;
     if(object.type === 'ransomware') points += 3;
+    if(object.type === 'shield') points += 5;
     if(this.multiplierActive) {
       points *= this.scoreMultiplier;
     }
 
+    console.log('ola');
     this.score += points;
-    this.scoreText.setText(`Protection: ${this.score}%${this.multiplierActive ? `  ${this.scoreMultiplier}X points` : ''}`);
-    object.destroy();
-  }
+    this.scoreText.setText(`${this.score}P${this.multiplierActive ? `  ${this.scoreMultiplier}X` : ''}`);
 
-  handleShieldClick(shield: Phaser.GameObjects.GameObject) {
-    shield.destroy();
-    this.score += this.multiplierActive ? 5 * this.scoreMultiplier : 5;
-    this.scoreText.setText(`Protection: ${this.score}%${this.multiplierActive ? `  ${this.scoreMultiplier}X points` : ''}`);
-    this.activateShield();
+    const objectSprite = (object as Phaser.Physics.Arcade.Sprite);
+
+    const pointsText = this.add.text(+objectSprite.x, +objectSprite.y, `+${points}`, {
+      font: '16px',
+      color: '#00FF00',
+      stroke: '#000000',
+      strokeThickness: 3,
+    }).setOrigin(0.5);
+
+    this.tweens.add({
+      targets: pointsText,
+      y: +objectSprite.y,
+      duration: 1000,
+      ease: 'Cubic.easeOut',
+      onComplete: () => pointsText.destroy()
+    })
+    objectSprite.anims.pause();
+    objectSprite.anims.play('explosion');
+    objectSprite.on('animationcomplete', () => {object.destroy()});
+    object.destroy();
+
+
+    console.log('olaOB', object);
+
   }
 
   activateShield() {
     this.shieldActive = true;
 
-    if(!this.shieldBorder) {
-      this.shieldBorder = this.add.graphics();
-      this.shieldBorder.lineStyle(8, 0x00ff00, 1)
-      this.shieldBorder.strokeRect(0, 0, +this.sys.game.config.width, +this.sys.game.config.height);
-    } else {
-      this.shieldBorder.setVisible(true);
-    }
+    this.drawShieldBorder();
 
     this.time.addEvent({
       delay: 5000,
@@ -144,17 +173,32 @@ export class FallingViruses extends Phaser.Scene {
     
   }
 
+  drawShieldBorder() {
+    const width = +this.sys.game.config.width;
+    const height = +this.sys.game.config.height;
+    const borderWidth = 5;
+
+    this.shieldBorder?.clear();
+
+    this.shieldBorder?.fillStyle(0x00ff00, 1);
+    this.shieldBorder?.fillRect(0, height - borderWidth, width, borderWidth);
+
+    this.shieldBorder?.fillStyle(0x00cc00, 0.5);
+    this.shieldBorder?.fillRect(borderWidth, height - 2* borderWidth, width, borderWidth);
+
+    this.shieldBorder?.fillStyle(0x00cc00, 0.5);
+    this.shieldBorder.fillRect(0, height - 2 * borderWidth, width, borderWidth);
+  }
+
   deactivateShield() {
     this.shieldActive = false;
-    if(this.shieldBorder) {
-      this.shieldBorder.setVisible(false);
-    }
+    this.shieldBorder?.clear();
   }
 
   deactivateScoreMultiplier() {
     console.log('deactivate multiplier')
     this.multiplierActive = false;
-    this.scoreText.setText(`Protection: ${this.score}%`);
+    this.scoreText.setText(`${this.score}P`);
   }
 
   update() {
