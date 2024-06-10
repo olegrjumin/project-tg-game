@@ -1,3 +1,5 @@
+import { HapticFeedback } from "@tma.js/sdk-react";
+
 export class FallingViruses extends Phaser.Scene {
   private score: number;
   private shieldActive: boolean;
@@ -11,10 +13,12 @@ export class FallingViruses extends Phaser.Scene {
   private shieldBorder!: Phaser.GameObjects.Graphics;
   private multiplierImage!: Phaser.GameObjects.Image;
   private gameEndCallback: (score: number) => void;
+  private haptics: HapticFeedback;
 
   constructor(
     gameEndCallback: (score: number) => void,
     scoreMultiplier: number = 1,
+    haptics: HapticFeedback,
   ) {
     super();
     this.score = 0;
@@ -22,6 +26,7 @@ export class FallingViruses extends Phaser.Scene {
     this.gameEndCallback = gameEndCallback || (() => {});
     this.scoreMultiplier = scoreMultiplier < 5 ? scoreMultiplier : 5;
     this.multiplierActive = scoreMultiplier > 1;
+    this.haptics = haptics;
   }
 
   preload() {
@@ -199,6 +204,8 @@ export class FallingViruses extends Phaser.Scene {
   }
 
   handleObjectClick(object: Phaser.GameObjects.GameObject) {
+    this.haptics.impactOccurred("light");
+
     let points = 0;
     if (object.type === "virus") points += 1;
     if (object.type === "ransomware") points += 3;
