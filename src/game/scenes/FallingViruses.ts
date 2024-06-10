@@ -9,6 +9,7 @@ export class FallingViruses extends Phaser.Scene {
   private ransomwareGroup!: Phaser.Physics.Arcade.Group;
   private shieldGroup!: Phaser.Physics.Arcade.Group;
   private shieldBorder!: Phaser.GameObjects.Graphics;
+  private multiplierImage!: Phaser.GameObjects.Image;
   private gameEndCallback: (score: number) => void;
 
   constructor(
@@ -26,6 +27,8 @@ export class FallingViruses extends Phaser.Scene {
   preload() {
     this.load.setBaseURL(window.location.origin);
     this.load.image("background", "/assets/game-background.png");
+    this.load.image("multiplier", "/assets/multiplier.png");
+
     this.load.atlas(
       "shield_animation",
       "/assets/shield-sprites.png",
@@ -137,18 +140,18 @@ export class FallingViruses extends Phaser.Scene {
     });
 
     this.scoreText = this.add
-      .text(
-        gameWidth - 20,
-        20,
-        `${this.score}P${this.multiplierActive ? `  ${this.scoreMultiplier}X` : ""}`,
-        {
-          fontSize: "24px",
-          color: "#000000",
-          backgroundColor: "#ffffff",
-          padding: { x: 5, y: 5 },
-        },
-      )
+      .text(gameWidth - 20, 20, `${this.score}P`, {
+        fontSize: 20,
+        fontFamily: "Stalinist One",
+        color: "#fff",
+        padding: { x: 5, y: 5 },
+      })
       .setOrigin(1, 0);
+
+    this.multiplierImage = this.add.image(0, 0, "multiplier");
+    this.multiplierImage.setOrigin(1, 0);
+    this.multiplierImage.setPosition(gameWidth - 20, 50);
+    this.multiplierImage.setVisible(this.multiplierActive);
 
     this.shieldBorder = this.add.graphics();
     this.shieldBorder.setDepth(1);
@@ -204,10 +207,7 @@ export class FallingViruses extends Phaser.Scene {
       points *= this.scoreMultiplier;
     }
 
-    this.score += points;
-    this.scoreText.setText(
-      `${this.score}P${this.multiplierActive ? `  ${this.scoreMultiplier}X` : ""}`,
-    );
+    this.updateScore(points);
 
     const objectSprite = object as Phaser.Physics.Arcade.Sprite;
 
@@ -241,6 +241,22 @@ export class FallingViruses extends Phaser.Scene {
 
     objectSprite.on("animationcomplete", () => {
       object.destroy();
+    });
+  }
+
+  updateScore(value: number) {
+    this.score += value;
+    this.scoreText.setText(`${this.score}P`);
+
+    this.multiplierImage.setVisible(this.multiplierActive);
+
+    this.tweens.add({
+      targets: this.scoreText,
+      scaleX: 1.1,
+      scaleY: 1.1,
+      duration: 150,
+      yoyo: true,
+      ease: "Power1",
     });
   }
 
@@ -286,7 +302,7 @@ export class FallingViruses extends Phaser.Scene {
   deactivateScoreMultiplier() {
     console.log("deactivate multiplier");
     this.multiplierActive = false;
-    this.scoreText.setText(`${this.score}P`);
+    this.updateScore(this.score);
   }
 
   update() {
