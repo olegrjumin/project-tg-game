@@ -1,12 +1,46 @@
 import { useUtils } from "@tma.js/sdk-react";
+import { useQuery } from "convex/react";
 import { Link, useLocation } from "react-router-dom";
 import { useScramble } from "use-scramble";
+import { api } from "../../convex/_generated/api";
 import { useSaveGameResult } from "../hooks/use-save-game-result";
+import { useTgUser } from "../hooks/use-tg-user";
+
+const LeaderboardResult = () => {
+  const topTenUsers = useQuery(api.queries.topTenUsers);
+  const tgUser = useTgUser();
+
+  const pointsToEmoji = (place: number) => {
+    switch (place) {
+      case 1:
+        return "🥇";
+      case 2:
+        return "🥈";
+      case 3:
+        return "🥉";
+      default:
+        return "";
+    }
+  };
+
+  const userPlaceInTopTen = (topTenUsers || []).findIndex(
+    (user) => user.tgUserId === tgUser.id,
+  );
+
+  const place = userPlaceInTopTen + 1;
+
+  return (
+    <div className="text-sm">
+      {place
+        ? `Place: ${place} ${pointsToEmoji(place)}`
+        : "Place: Not in Top 10"}
+    </div>
+  );
+};
 
 export const Result = () => {
   const location = useLocation();
   const points = location.state?.score || 0;
-
   const utils = useUtils();
 
   useSaveGameResult(points);
@@ -62,11 +96,8 @@ export const Result = () => {
           </svg>
         )}
 
-        <div className="text-2xl">
-          {showSuccess ? "Congratulations!" : "Oh... You lost!"}
-        </div>
-
         <div className="text-3xl">{points} points</div>
+        <LeaderboardResult />
 
         <div>
           <div className="text-sm">
@@ -80,8 +111,6 @@ export const Result = () => {
               </>
             ) : (
               <>
-                <p>It's okay, you can always try again!</p>
-
                 <p>
                   It's better to rely on professionals when <br /> it comes to
                   protecting your device from threats.

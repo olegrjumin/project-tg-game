@@ -1,55 +1,56 @@
 import { useLaunchParams } from "@tma.js/sdk-react";
-import { useMutation, useQuery } from "convex/react";
-import { useEffect, useState } from "react";
+import { useConvex } from "convex/react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { api } from "../../convex/_generated/api";
 import { useTgUser } from "./use-tg-user";
 
 export const useInitUser = () => {
-  const [userJustCreated, setUserJustCreated] = useState(false);
-
   const currentTgUser = useTgUser();
   const lp = useLaunchParams();
   const refId = lp.startParam || "";
-
-  const userExistsQueryResult = useQuery(api.queries.userByTelegramId, {
-    tgUserId: currentTgUser?.id,
-  });
-  const newUserMutation = useMutation(api.queries.newUser);
-  const userExists = !!userExistsQueryResult?._id;
-  const userExistsIsDefined = userExistsQueryResult !== undefined;
+  const convex = useConvex();
 
   useEffect(() => {
-    if (userExists && !userJustCreated) {
-      toast.info(`Welcome back!`!);
-    }
-  }, [userExists, userJustCreated]);
-
-  useEffect(() => {
-    if (
-      refId &&
-      refId !== currentTgUser.id &&
-      userExistsIsDefined &&
-      !userExists
-    ) {
-      toast.info(`Welcome to the Tapathon! You have been invited!`!);
-    }
-  }, [refId, currentTgUser.id, userExists, userExistsIsDefined]);
-
-  useEffect(() => {
-    if (userExists) {
-      return;
-    }
-    async function createUser() {
-      await newUserMutation({
+    async function createUser(newRefId?: string) {
+      await convex.mutation(api.queries.newUser, {
         firstName: currentTgUser?.firstName || "",
         lastName: currentTgUser?.lastName || "",
         tgUserId: currentTgUser.id,
-        refId: refId,
+        refId: newRefId,
       });
-      setUserJustCreated(true);
     }
 
-    createUser();
-  }, [currentTgUser, newUserMutation, refId, userExists]);
+    async function initUser() {
+      const user = await convex.query(api.queries.userByTelegramId, {
+        tgUserId: currentTgUser?.id,
+      });
+
+      if (currentTgUser.id === user?.tgUserId) {
+        toast.info(`Welcome back!`);
+        return;
+      }
+
+      const refUser = await convex.query(api.queries.userByTelegramId, {
+        tgUserId: refId,
+      });
+
+      if (refUser?.tgUserId === refId) {
+        await createUser(refId);
+        toast.info(
+          `Welcome to the Tapathon! You have been invited by ${refUser.firstName}!`,
+        );
+        return;
+      } else {
+        await createUser();
+        const noRefUser = refId && refUser === null;
+        toast.info(
+          `Welcome to the Tapathon! ${noRefUser ? "User who invited you does not exist" : ""}`,
+        );
+        return;
+      }
+    }
+
+    initUser();
+  }, [currentTgUser, convex, refId]);
 };

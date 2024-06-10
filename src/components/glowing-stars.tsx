@@ -12,7 +12,12 @@ export const GlowingStarsBackgroundCard = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <div className={cn("absolute inset-0 z-[5] h-full w-full", className)}>
+    <div
+      className={cn(
+        "absolute inset-0 z-[5] opacity-[0.5] h-full w-full",
+        className,
+      )}
+    >
       <div className="flex justify-center items-center">
         <Illustration />
       </div>
