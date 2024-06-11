@@ -1,7 +1,6 @@
 import { SDKProvider, useLaunchParams } from "@tma.js/sdk-react";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import React, { useEffect, type FC } from "react";
-import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { ErrorBoundary } from "./components/error-boundary";
 import { ErrorBoundaryError } from "./components/error-boundary-error";
@@ -20,11 +19,9 @@ const Inner: FC = () => {
   return (
     <React.StrictMode>
       <SDKProvider acceptCustomStyles debug={debug}>
-        <BrowserRouter>
-          <ConvexProvider client={convex}>
-            <App />
-          </ConvexProvider>
-        </BrowserRouter>
+        <ConvexProvider client={convex}>
+          <App />
+        </ConvexProvider>
       </SDKProvider>
     </React.StrictMode>
   );

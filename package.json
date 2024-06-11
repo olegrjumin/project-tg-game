@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc --noEmit && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@radix-ui/react-scroll-area": "^1.0.5",
-    "@tma.js/sdk-react": "^2.2.2",
+    "@tma.js/react-router-integration": "^4.0.2",
+    "@tma.js/sdk-react": "^2.2.3",
+    "@vitejs/plugin-react-swc": "^3.7.0",
     "convex": "^1.12.1",
     "eruda": "^3.0.1",
     "framer-motion": "^11.2.10",
@@ -21,27 +23,28 @@
     "react-router-dom": "^6.23.1",
     "sonner": "^1.4.41",
     "use-scramble": "^2.2.15",
-    "zustand": "^4.5.2"
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "devDependencies": {
-    "@types/node": "^20.14.0",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
+    "@types/node": "^20.14.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
     "@vitejs/plugin-basic-ssl": "^1.1.0",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
     "clsx": "^2.1.1",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "globals": "^15.4.0",
     "postcss": "^8.4.38",
     "prettier": "^3.3.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss": "^3.4.3",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
     "vite-plugin-checker": "^0.6.4"
   }
 }
