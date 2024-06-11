@@ -43,8 +43,7 @@ export const InviteFriends = () => {
             Invite friend!
           </h2>
           <p className="text-sm text-white">
-            Invite your friends to join the Tapathon and gain more protection
-            shields!
+            Invite your friends to join the Tapathon and gain score multiplier for each friend (5x max) that lasts 10 seconds. More friends, more points!
           </p>
         </div>
         <button

@@ -11,6 +11,7 @@ export class FallingViruses extends Phaser.Scene {
   private ransomwareGroup!: Phaser.Physics.Arcade.Group;
   private shieldGroup!: Phaser.Physics.Arcade.Group;
   private shieldBorder!: Phaser.GameObjects.Graphics;
+  private multiplierText!: Phaser.GameObjects.Text;
   private multiplierImage!: Phaser.GameObjects.Image;
   private gameEndCallback: (score: number) => void;
   private haptics: HapticFeedback;
@@ -158,10 +159,22 @@ export class FallingViruses extends Phaser.Scene {
       })
       .setOrigin(1, 0);
 
-    this.multiplierImage = this.add.image(0, 0, "multiplier");
-    this.multiplierImage.setOrigin(1, 0);
-    this.multiplierImage.setPosition(gameWidth - 20, 50);
+      this.multiplierText = this.add
+      .text(this.scoreText.x - 35, this.scoreText.y + (this.scoreText.height / 2) + 50, `${this.scoreMultiplier}x`, {
+        fontSize: 10,
+        fontFamily: "Stalinist One",
+        color: "#000",
+        padding: { x: 10, y: 5 },
+      })
+      .setOrigin(0.5, 0.5);
+
+    this.multiplierText.setDepth(0.1);
+    this.multiplierImage = this.add.image(this.scoreText.x - 35, this.scoreText.y + (this.scoreText.height / 2) + 50, "multiplier");
+    this.multiplierImage.setDepth(0);
+    
+    this.multiplierText.setVisible(this.multiplierActive);
     this.multiplierImage.setVisible(this.multiplierActive);
+    
 
     this.shieldBorder = this.add.graphics();
     this.shieldBorder.setDepth(1);
@@ -210,6 +223,8 @@ export class FallingViruses extends Phaser.Scene {
 
   handleObjectClick(object: Phaser.GameObjects.GameObject) {
     this.haptics.impactOccurred("light");
+
+    object.disableInteractive();
 
     let points = 0;
     if (object.type === "virus") points += 1;
@@ -312,8 +327,9 @@ export class FallingViruses extends Phaser.Scene {
   }
 
   deactivateScoreMultiplier() {
-    console.log("deactivate multiplier");
     this.multiplierActive = false;
+    this.multiplierText.setVisible(false);
+    this.multiplierImage.setVisible(false);
     this.updateScore(this.score);
   }
 
