@@ -126,7 +126,7 @@
       "spriteSourceSize": { "x": 0, "y": 0, "w": 27, "h": 27 },
       "sourceSize": { "w": 27, "h": 27 }
     },
-    "expolosion_0000": {
+    "explosion_0000": {
       "frame": { "x": 866, "y": 2, "w": 45, "h": 45 },
       "rotated": false,
       "trimmed": false,
