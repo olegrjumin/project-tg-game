@@ -5,7 +5,7 @@ import { cn } from "../lib/utils";
 export const Menu = () => {
   const { isActive } = useActivePath();
   return (
-    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 ">
+    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200">
       <div className="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
         <NavLink
           to="/"
@@ -91,7 +91,7 @@ export const Menu = () => {
             <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
-          <span className="text-sm text-current">Invite friends</span>
+          <span className="text-sm text-current">Invite</span>
         </NavLink>
       </div>
     </div>

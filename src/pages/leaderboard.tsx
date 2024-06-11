@@ -8,7 +8,7 @@ export const Leaderboard = () => {
 
   return (
     <main className="relative h-screen w-screen justify-center mx-auto p-10 flex items-center">
-      <div className="flex flex-col space-y-10 text-center w-full h-full max-w-lg">
+      <div className="flex flex-col space-y-4 text-center w-full h-full max-w-lg">
         <div className="text-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
