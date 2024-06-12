@@ -147,7 +147,8 @@ export class FallingViruses extends Phaser.Scene {
       delay: 15000,
       callback: this.deactivateScoreMultiplier,
       callbackScope: this,
-      loop: true,
+      repeat: 0,
+      loop: false,
     });
 
     this.scoreText = this.add
@@ -183,11 +184,13 @@ export class FallingViruses extends Phaser.Scene {
   addVirus(startTime: number) {
     const x = Phaser.Math.Between(40, +this.sys.game.config.width - 40);
     const virus = this.virusGroup.create(x, 0, "virus");
+
     virus.anims.play("virus_idle");
     const timeElapsed = Date.now() - startTime;
     virus.type = "virus";
     virus.setVelocityY(50 + 2 * Math.round(timeElapsed / 1000));
     virus.setInteractive();
+    virus.setDepth(3);
     virus.on("pointerdown", () => {
       this.handleObjectClick(virus);
     });
@@ -201,6 +204,7 @@ export class FallingViruses extends Phaser.Scene {
     ransomware.type = "ransomware";
     ransomware.setVelocityY(100 + 2 * Math.round(timeElapsed / 1000));
     ransomware.setInteractive();
+    ransomware.setDepth(3);
     ransomware.on("pointerdown", () => {
       this.handleObjectClick(ransomware);
     });
@@ -215,6 +219,7 @@ export class FallingViruses extends Phaser.Scene {
     shield.type = "shield";
     shield.setVelocityY(150 + 2 * Math.round(timeElapsed / 1000));
     shield.setInteractive();
+    shield.setDepth(3);
     shield.on("pointerdown", () => {
       this.handleObjectClick(shield);
       this.activateShield();
@@ -330,7 +335,6 @@ export class FallingViruses extends Phaser.Scene {
     this.multiplierActive = false;
     this.multiplierText.setVisible(false);
     this.multiplierImage.setVisible(false);
-    this.updateScore(this.score);
   }
 
   update() {
