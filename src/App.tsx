@@ -1,17 +1,14 @@
 import { useIntegration } from "@tma.js/react-router-integration";
-import { initNavigator } from "@tma.js/sdk-react";
+import { initNavigator, useLaunchParams } from "@tma.js/sdk-react";
 import { useEffect, useMemo } from "react";
-import { Navigate, Route, Router, Routes } from "react-router-dom";
-import { Layout } from "./components/layout";
+import { BrowserRouter,  Router, } from "react-router-dom";
 import { useInitUser } from "./hooks/use-init-user";
-import { Game } from "./pages/game";
-import { Home } from "./pages/home";
-import { InviteFriends } from "./pages/invite-friends";
-import { Leaderboard } from "./pages/leaderboard";
-import { Result } from "./pages/result";
+import { isRunningWithinTelegram } from "./lib/storage";
+import AppRoutes from "./app-routes";
 
 function App() {
   useInitUser();
+  const { platform } = useLaunchParams();
 
   // Create new application navigator and attach it to the browser history, so it could modify
   // it and listen to its changes.
@@ -25,19 +22,18 @@ function App() {
     return () => navigator.detach();
   }, [navigator]);
 
+  if (!isRunningWithinTelegram(platform)) {
+    return (
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    )
+  }
+
   return (
     <div>
       <Router location={location} navigator={reactNavigator}>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/invite-friends" element={<InviteFriends />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/result" element={<Result />} />
-          </Route>
-          <Route path="/game" element={<Game />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+        <AppRoutes />
       </Router>
     </div>
   );
