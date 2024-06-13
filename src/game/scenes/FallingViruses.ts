@@ -1,4 +1,5 @@
 import { HapticFeedback } from "@tma.js/sdk-react";
+import WebFontFile from "./WebFontFile";
 
 export class FallingViruses extends Phaser.Scene {
   private score: number;
@@ -21,7 +22,8 @@ export class FallingViruses extends Phaser.Scene {
     scoreMultiplier: number = 1,
     haptics: HapticFeedback,
   ) {
-    super();
+    super("custom-font");
+
     this.score = 0;
     this.shieldActive = false;
     this.gameEndCallback = gameEndCallback || (() => {});
@@ -31,6 +33,8 @@ export class FallingViruses extends Phaser.Scene {
   }
 
   preload() {
+    this.load.addFile(new WebFontFile(this.load, "Stalinist One"));
+
     if (import.meta.env.DEV) {
       this.load.setBaseURL(window.location.origin);
     } else {
@@ -160,22 +164,30 @@ export class FallingViruses extends Phaser.Scene {
       })
       .setOrigin(1, 0);
 
-      this.multiplierText = this.add
-      .text(this.scoreText.x - 35, this.scoreText.y + (this.scoreText.height / 2) + 50, `${this.scoreMultiplier}x`, {
-        fontSize: 10,
-        fontFamily: "Stalinist One",
-        color: "#000",
-        padding: { x: 10, y: 5 },
-      })
+    this.multiplierText = this.add
+      .text(
+        this.scoreText.x - 35,
+        this.scoreText.y + this.scoreText.height / 2 + 50,
+        `${this.scoreMultiplier}x`,
+        {
+          fontSize: 10,
+          fontFamily: "Stalinist One",
+          color: "#000",
+          padding: { x: 10, y: 5 },
+        },
+      )
       .setOrigin(0.5, 0.5);
 
     this.multiplierText.setDepth(0.1);
-    this.multiplierImage = this.add.image(this.scoreText.x - 35, this.scoreText.y + (this.scoreText.height / 2) + 50, "multiplier");
+    this.multiplierImage = this.add.image(
+      this.scoreText.x - 35,
+      this.scoreText.y + this.scoreText.height / 2 + 50,
+      "multiplier",
+    );
     this.multiplierImage.setDepth(0);
-    
+
     this.multiplierText.setVisible(this.multiplierActive);
     this.multiplierImage.setVisible(this.multiplierActive);
-    
 
     this.shieldBorder = this.add.graphics();
     this.shieldBorder.setDepth(1);
