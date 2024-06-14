@@ -1,6 +1,13 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+export const totalUsersCount = query({
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    return users.length;
+  },
+});
+
 export const userByTelegramId = query({
   args: {
     tgUserId: v.string(),
@@ -16,8 +23,9 @@ export const userByTelegramId = query({
 export const topTenUsers = query({
   handler: async (ctx) => {
     const users = await ctx.db.query("users").collect();
+    const totalUsers = users.length;
     const topTenUsers = users.sort((a, b) => b.points - a.points).slice(0, 10);
-    return topTenUsers;
+    return { topTenUsers, totalUsers };
   },
 });
 

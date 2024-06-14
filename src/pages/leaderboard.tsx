@@ -1,10 +1,10 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { invitees } from "../../convex/queries";
 import { UserList, UserSkeletonList } from "../components/user-list";
 
 export const Leaderboard = () => {
-  const topTenUsers = useQuery(api.queries.topTenUsers);
+  const data = useQuery(api.queries.topTenUsers);
+  const { topTenUsers, totalUsers } = data || {};
 
   return (
     <main className="relative h-screen w-screen justify-center mx-auto p-10 flex items-center">
@@ -29,16 +29,19 @@ export const Leaderboard = () => {
           <h2 className="text-2xl font-semibold text-white mb-2">
             Leaderboard
           </h2>
-          <p className="text-sm text-white">The best protectors of the month</p>
+          <p className="text-sm text-white">
+            The top 10 protectors of the month
+            {totalUsers && totalUsers > 10 && ` out of ${totalUsers} users`}
+          </p>
         </div>
-        {invitees === undefined ? <UserSkeletonList /> : null}
-        {invitees && invitees.length === 0 && (
+        {topTenUsers === undefined ? <UserSkeletonList /> : null}
+        {topTenUsers && topTenUsers.length === 0 && (
           <div className="rounded-md border-opacity-[0.2] border border-dashed border-white h-20 flex items-center justify-center">
             Leaderboard is empty
           </div>
         )}
 
-        {invitees && invitees?.length > 0 ? (
+        {topTenUsers && topTenUsers?.length > 0 ? (
           <UserList users={topTenUsers || []} />
         ) : null}
       </div>

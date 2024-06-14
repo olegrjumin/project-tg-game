@@ -7,7 +7,8 @@ import { useSaveGameResult } from "../hooks/use-save-game-result";
 import { useTgUser } from "../hooks/use-tg-user";
 
 const LeaderboardResult = () => {
-  const topTenUsers = useQuery(api.queries.topTenUsers);
+  const data = useQuery(api.queries.topTenUsers);
+  const { topTenUsers } = data || {};
   const tgUser = useTgUser();
 
   const pointsToEmoji = (place: number) => {
