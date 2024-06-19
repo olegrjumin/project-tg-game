@@ -8,6 +8,12 @@ Your objective is simple: protect your device by tapping to destroy incoming thr
 
 ## Setup
 
+Set env variables
+
+```bash
+VITE_CONVEX_URL=
+```
+
 Go to [convex.com](https://www.convex.dev/) and create a new project. This will be you backend
 
 ```bash
