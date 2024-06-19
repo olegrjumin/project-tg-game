@@ -43,7 +43,9 @@ export const InviteFriends = () => {
             Invite friend!
           </h2>
           <p className="text-sm text-white">
-            Invite your friends to join the Tapathon and gain score multiplier for each friend (5x max) that lasts 10 seconds. More friends, more points!
+            Invite your friends to join the Tapathon and gain score multiplier
+            for each friend (5x max) that lasts 10 seconds. More friends, more
+            points!
           </p>
         </div>
         <button
@@ -63,7 +65,7 @@ export const InviteFriends = () => {
           <UserList users={invitees || []} />
         ) : null}
       </div>
-      <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+      <div className="fixed inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
     </main>
   );
 };
