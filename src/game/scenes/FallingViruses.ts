@@ -200,7 +200,7 @@ export class FallingViruses extends Phaser.Scene {
     virus.anims.play("virus_idle");
     const timeElapsed = Date.now() - startTime;
     virus.type = "virus";
-    virus.setVelocityY(50 + 2 * Math.round(timeElapsed / 1000));
+    virus.setVelocityY(80 + 2 * Math.round(timeElapsed / 1000));
     virus.setInteractive();
     virus.setDepth(3);
     virus.on("pointerdown", () => {
@@ -214,7 +214,7 @@ export class FallingViruses extends Phaser.Scene {
     ransomware.anims.play("ransomware_idle");
     const timeElapsed = Date.now() - startTime;
     ransomware.type = "ransomware";
-    ransomware.setVelocityY(100 + 2 * Math.round(timeElapsed / 1000));
+    ransomware.setVelocityY(120 + 2 * Math.round(timeElapsed / 1000));
     ransomware.setInteractive();
     ransomware.setDepth(3);
     ransomware.on("pointerdown", () => {
@@ -239,7 +239,7 @@ export class FallingViruses extends Phaser.Scene {
   }
 
   handleObjectClick(object: Phaser.GameObjects.GameObject) {
-    this.haptics.impactOccurred("light");
+    this.haptics.impactOccurred("medium");
 
     object.disableInteractive();
 
